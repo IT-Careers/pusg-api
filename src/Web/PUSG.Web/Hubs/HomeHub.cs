@@ -28,7 +28,7 @@ namespace PUSG.Web.Hubs
 
         public async Task SendMessage(string username, string messageContent)
         {
-            if (this.sessionService.IsLogged(username))
+            if (this.sessionService.IsLogged(username) || username == "PUSG")
             {
                 await this.BroadcastToLoggedIn("ReceiveMessage", username, messageContent);
             }

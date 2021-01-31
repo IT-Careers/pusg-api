@@ -6,7 +6,7 @@ namespace PUSG.Web.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        [Route("/")]
+        [Route("/index")]
         public IActionResult Index()
         {
             return Ok();

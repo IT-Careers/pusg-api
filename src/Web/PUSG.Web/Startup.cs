@@ -21,6 +21,9 @@ namespace PUSG.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ISessionService, SessionService>();
+            services.AddSingleton<IGameService, GameService>();
+            services.AddSingleton<GameLoopService>();
+            services.AddHostedService<GameLoopService>(provider => provider.GetService<GameLoopService>());
 
             services.AddControllers();
             services.AddSignalR();
@@ -30,7 +33,7 @@ namespace PUSG.Web
                 options.AddPolicy("CustomPolicy", builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:8001")
+                        .WithOrigins("https://it-careers.github.io", "http://localhost:8001")
                         .AllowCredentials()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
@@ -55,6 +58,7 @@ namespace PUSG.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<HomeHub>("/home");
+                endpoints.MapHub<GameHub>("/game");
                 endpoints.MapControllers();
             });
         }
