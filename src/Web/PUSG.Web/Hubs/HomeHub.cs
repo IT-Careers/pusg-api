@@ -38,7 +38,9 @@ namespace PUSG.Web.Hubs
         {
             if(!this.sessionService.IsLogged(username))
             {
+                await this.BroadcastToLoggedIn("OnLoggedIn", username);
                 this.sessionService.AddUser(this.Context.ConnectionId, username);
+                await this.Clients.Caller.SendAsync("OnLoggedIn", this.sessionService.Users.Values);
             }
         }
 
@@ -53,9 +55,10 @@ namespace PUSG.Web.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            string username = this.sessionService.Users[this.Context.ConnectionId];
             this.sessionService.LiveConnections.Remove(this.Context.ConnectionId);
             this.sessionService.RemoveUser(this.Context.ConnectionId);
-
+            await this.BroadcastToLoggedIn("OnLoggedOut", username);
             await base.OnDisconnectedAsync(exception);
         }
     }
