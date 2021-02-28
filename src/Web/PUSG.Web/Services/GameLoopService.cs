@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PUSG.Web.Static
+namespace PUSG.Web.Services
 {
     public class GameLoopService : IGameLoopService
     {

@@ -4,7 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PUSG.Web.Hubs;
-using PUSG.Web.Static;
+using PUSG.Web.Services;
+using PUSG.Web.Events;
 
 namespace PUSG.Web
 {
@@ -20,6 +21,7 @@ namespace PUSG.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IEventService, EventService>();
             services.AddSingleton<ISessionService, SessionService>();
             services.AddSingleton<IGameService, GameService>();
             services.AddSingleton<GameLoopService>();

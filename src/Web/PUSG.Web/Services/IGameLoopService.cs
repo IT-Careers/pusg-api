@@ -2,7 +2,7 @@
 using PUSG.Web.Models;
 using System;
 
-namespace PUSG.Web.Static
+namespace PUSG.Web.Services
 {
     public interface IGameLoopService : IHostedService, IDisposable
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace PUSG.Web.Static
+namespace PUSG.Web.Services
 {
     public class SessionService : ISessionService
     {

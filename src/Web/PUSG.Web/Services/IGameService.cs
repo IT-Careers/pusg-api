@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PUSG.Web.Static
+namespace PUSG.Web.Services
 {
     public interface IGameService
     {

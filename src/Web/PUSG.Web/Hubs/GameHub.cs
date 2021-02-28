@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using PUSG.Web.Models;
-using PUSG.Web.Static;
+using PUSG.Web.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,11 +10,19 @@ namespace PUSG.Web.Hubs
 {
     public class GameHub : Hub
     {
+        private const string ServerMessageUser = "PUSG";
+
+        private ISessionService sessionService;
+
         private IGameService gameService;
 
-        public GameHub(IGameService gameService)
+        private IHubContext<HomeHub> homeHubContext;
+
+        public GameHub(ISessionService sessionService, IGameService gameService, IHubContext<HomeHub> homeHubContext)
         {
+            this.sessionService = sessionService;
             this.gameService = gameService;
+            this.homeHubContext = homeHubContext;
         }
 
         public override async Task OnConnectedAsync()
@@ -127,11 +136,18 @@ namespace PUSG.Web.Hubs
                 string clientUsername = this.gameService.PlayerUsernames[id];
                 string otherClientUsername = this.gameService.PlayerUsernames[otherId];
 
+                List<string> clientSessionIds = this.sessionService.Users.Where(user => user.Value == clientUsername).Select(user => user.Key).ToList();
+
+                List<string> otherClientSessionIds = this.sessionService.Users.Where(user => user.Value == otherClientUsername).Select(user => user.Key).ToList();
+
+                List<string> totalExcludedIds = clientSessionIds.Concat(otherClientSessionIds).ToList();
+
                 string winningMessage =
                     this.gameService.PlayerColor[id] == gameSession.Winner
                     ? $"{clientUsername} won against {otherClientUsername}!"
                     : $"{otherClientUsername} won against {clientUsername}!";
 
+                await this.homeHubContext.Clients.AllExcept(totalExcludedIds).SendAsync("ReceiveMessage", new[] { ServerMessageUser, winningMessage });
                 await this.Clients.Clients(id, otherId).SendAsync("GameEnd", new { Result = winningMessage });
             }
             else

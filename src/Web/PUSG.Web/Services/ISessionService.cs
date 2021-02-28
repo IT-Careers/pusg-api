@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PUSG.Web.Static
+namespace PUSG.Web.Services
 {
     public interface ISessionService
     {

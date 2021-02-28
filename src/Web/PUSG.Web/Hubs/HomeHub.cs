@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using PUSG.Web.Static;
+using PUSG.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,8 @@ namespace PUSG.Web.Hubs
 {
     public class HomeHub : Hub
     {
+        private const string ServerMessageUser = "PUSG";
+
         private ISessionService sessionService;
 
         public HomeHub(ISessionService sessionService)
@@ -55,10 +57,14 @@ namespace PUSG.Web.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            string username = this.sessionService.Users[this.Context.ConnectionId];
-            this.sessionService.LiveConnections.Remove(this.Context.ConnectionId);
-            this.sessionService.RemoveUser(this.Context.ConnectionId);
-            await this.BroadcastToLoggedIn("OnLoggedOut", username);
+            if (this.sessionService.IsLogged(this.Context.ConnectionId))
+            {
+                string username = this.sessionService.Users[this.Context.ConnectionId];
+                this.sessionService.LiveConnections.Remove(this.Context.ConnectionId);
+                this.sessionService.RemoveUser(this.Context.ConnectionId);
+                await this.BroadcastToLoggedIn("OnLoggedOut", username);
+            }
+
             await base.OnDisconnectedAsync(exception);
         }
     }
